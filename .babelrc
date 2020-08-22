@@ -1,5 +1,7 @@
 {
-  "presets": [],
+  "presets": [
+    "@babel/react"
+  ],
   "plugins": [
     "@babel/proposal-async-generator-functions",
     "@babel/proposal-class-properties",
