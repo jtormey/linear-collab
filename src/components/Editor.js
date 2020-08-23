@@ -1,40 +1,23 @@
 import React, { useRef, useEffect } from 'react'
-import { EditorState } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
-import { Schema, DOMParser } from 'prosemirror-model'
-import { schema } from 'prosemirror-schema-basic'
-import { addListNodes } from 'prosemirror-schema-list'
-import { undo, redo, history } from 'prosemirror-history'
-import { keymap } from 'prosemirror-keymap'
-import { baseKeymap } from 'prosemirror-commands'
-
-const editorSchema = new Schema({
-  nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
-  marks: schema.spec.marks
-})
+import { createEditorDoc, mountEditorView, editorSchema } from '../prosemirror/Editor'
+import ExtensionAuthority from '../prosemirror/ExtensionAuthority'
 
 function scrapeEditorClasses () {
   return document.querySelector('div[placeholder] > div').classList.value
 }
 
-export default function Editor () {
+export default function Editor ({ issueID }) {
   const elemRef = useRef(null)
   const renderRef = useRef(true)
 
   useEffect(() => {
     if (elemRef.current && renderRef.current) {
       const linearEditorElem = document.querySelector('form div[contenteditable="true"]')
+      const editorDoc = createEditorDoc(linearEditorElem)
+      const authority = new ExtensionAuthority(editorDoc, editorSchema, issueID)
 
-      window.editorView = new EditorView(elemRef.current, {
-        state: EditorState.create({
-          doc: DOMParser.fromSchema(editorSchema).parse(linearEditorElem),
-          plugins: [
-            history(),
-            keymap({ 'Mod-z': undo, 'Mod-y': redo }),
-            keymap(baseKeymap)
-          ]
-        })
-      })
+      authority.init()
+      mountEditorView(elemRef.current, authority)
 
       renderRef.current = false
     }

@@ -14,7 +14,7 @@ const EditorContainerStyle = styled.div`
   overflow: scroll;
 `
 
-export default function EditorContainer () {
+export default function EditorContainer ({ issueID }) {
   const rect = useElemBoundingRect('form div[contenteditable="true"]')
   const [display, setDisplay] = useState(true)
 
@@ -23,7 +23,7 @@ export default function EditorContainer () {
   if (rect) {
     return (
       <EditorContainerStyle shouldDisplay={display} rect={rect}>
-        <Editor rect={rect} />
+        <Editor issueID={issueID} />
       </EditorContainerStyle>
     )
   }
