@@ -11,6 +11,7 @@ const EditorContainerStyle = styled.div`
   right: ${props => window.innerWidth - (props.rect.x + props.rect.width)}px;
   display: ${props => props.shouldDisplay ? 'block' : 'none'};
   background-color: rgb(31, 32, 35);
+  overflow: scroll;
 `
 
 export default function EditorContainer () {
