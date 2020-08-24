@@ -4,6 +4,8 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
+    "start": "node src/server.js",
+    "release": "sh extpackage.sh",
     "build": "webpack-cli",
     "build:watch": "webpack-cli -w"
   },

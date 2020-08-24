@@ -47,3 +47,16 @@ There are some minor style and structure issues, as my ProseMirror implementatio
 * ProseMirror (+ custom plugin)
 * Chrome extension (background script, context script, popup menu, `chrome.storage`)
 * Express (+ Web Sockets)
+
+## Installation
+
+See the [releases](https://github.com/jtormey/linear-collab/releases) page.
+
+After downloading a release build, go to [your extensions](chrome://extensions/) to install it ("Load unpacked").
+
+## Development
+
+* `yarn build`: Build the extension
+* `yarn build:watch`: Build the extension and watch for changes
+* `yarn start`: Start the socket server
+* `VER=$VER yarn release`: Build a new release
