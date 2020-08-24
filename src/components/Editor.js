@@ -8,18 +8,15 @@ function scrapeEditorClasses () {
 
 export default function Editor ({ issueID }) {
   const elemRef = useRef(null)
-  const renderRef = useRef(true)
 
   useEffect(() => {
-    if (elemRef.current && renderRef.current) {
+    if (elemRef.current) {
       const linearEditorElem = document.querySelector('form div[contenteditable="true"]')
       const editorDoc = createEditorDoc(linearEditorElem)
       const authority = new ExtensionAuthority(editorDoc, editorSchema, issueID)
 
       authority.init()
       const view = mountEditorView(elemRef.current, authority)
-
-      renderRef.current = false
 
       return () => {
         view.destroy()
