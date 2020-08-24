@@ -51,7 +51,9 @@ export default class ExtensionAuthority {
 
   handleUpdate (action) {
     if (action.type === 'steps-reply') {
-      const { steps, clientID } = action
+      const { steps, version, clientID } = action
+
+      if (version !== this.steps.length) return
 
       steps.forEach(step => {
         step = Step.fromJSON(this.schema, step)
