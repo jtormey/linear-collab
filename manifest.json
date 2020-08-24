@@ -2,7 +2,12 @@
   "manifest_version": 2,
   "name": "linear-collab",
   "version": "0.1.0",
-  "permissions": [],
+  "permissions": [
+    "storage"
+  ],
+  "browser_action": {
+    "default_popup": "menu.html"
+  },
   "background": {
     "scripts": [
       "background.build.js"

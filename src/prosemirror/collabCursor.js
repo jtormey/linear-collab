@@ -100,6 +100,10 @@ export function sendableData (state) {
 export function receiveTransaction (state, cursorData) {
   const transaction = state.tr
 
+  if (!state.collabCursor$) {
+    return transaction
+  }
+
   if (cursorData[state.collabCursor$.id] == null) {
     transaction.setMeta('collabCursor', { cursors: cursorData })
   }

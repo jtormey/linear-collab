@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import useElemBoundingRect from '../hooks/useElemBoundingRect'
+import useCollabState from '../hooks/useCollabState'
 import Editor from './Editor'
 
 const EditorContainerStyle = styled.div`
@@ -16,13 +17,11 @@ const EditorContainerStyle = styled.div`
 
 export default function EditorContainer ({ issueID }) {
   const rect = useElemBoundingRect('form div[contenteditable="true"]')
-  const [display, setDisplay] = useState(true)
-
-  window.setDisplay = setDisplay
+  const [enabled] = useCollabState()
 
   if (rect) {
     return (
-      <EditorContainerStyle shouldDisplay={display} rect={rect}>
+      <EditorContainerStyle shouldDisplay={enabled} rect={rect}>
         <Editor issueID={issueID} />
       </EditorContainerStyle>
     )

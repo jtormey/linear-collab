@@ -1,10 +1,11 @@
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const env = require('node-env-file')
 
-let resolve = (f) => path.join(__dirname, f)
+const resolve = (f) => path.join(__dirname, f)
 
-let loadEnvVars = [
+const loadEnvVars = [
   'NODE_ENV'
 ]
 
@@ -12,7 +13,7 @@ if (process.env.NODE_ENV == null) {
   env('.env')
 }
 
-let base = {
+const base = {
   mode: process.env.NODE_ENV,
   devtool: false,
   output: {
@@ -57,8 +58,20 @@ module.exports = [
   {
     ...base,
     entry: {
-      'background': resolve('src/background'),
-      'content': resolve('src/content')
+      background: resolve('src/background'),
+      content: resolve('src/content')
     }
+  },
+  {
+    ...base,
+    entry: {
+      menu: resolve('src/app-menu')
+    },
+    plugins: base.plugins.concat([
+      new HtmlWebpackPlugin({
+        filename: 'menu.html',
+        template: resolve('src/app-menu/menu.html')
+      })
+    ])
   }
 ]
