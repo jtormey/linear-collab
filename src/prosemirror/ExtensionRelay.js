@@ -16,12 +16,20 @@ export default class ExtensionRelay {
       this.tabsIssuesMapping[sender.tab.id] = action.issueID
     }
 
-    if (action.type === 'steps') {
-      this.tabs.forEach((tid) => {
-        if (this.tabsIssuesMapping[tid] === action.issueID) {
-          chrome.tabs.sendMessage(tid, action.payload)
-        }
-      })
+    if (action.type === 'steps-receive') {
+      this.sendToIssueID(action.issueID, { type: 'steps-reply', ...action.payload })
     }
+
+    if (action.type === 'cursor-receive') {
+      this.sendToIssueID(action.issueID, { type: 'cursor-reply', ...action.payload })
+    }
+  }
+
+  sendToIssueID (issueID, message) {
+    this.tabs.forEach((tid) => {
+      if (this.tabsIssuesMapping[tid] === issueID) {
+        chrome.tabs.sendMessage(tid, message)
+      }
+    })
   }
 }

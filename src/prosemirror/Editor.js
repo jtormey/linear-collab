@@ -7,6 +7,7 @@ import { undo, redo, history } from 'prosemirror-history'
 import { keymap } from 'prosemirror-keymap'
 import { baseKeymap } from 'prosemirror-commands'
 import * as collab from 'prosemirror-collab'
+import * as collabCursor from './collabCursor'
 
 export const editorSchema = new Schema({
   nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
@@ -25,7 +26,8 @@ export function mountEditorView (mountElem, authority) {
         history(),
         keymap({ 'Mod-z': undo, 'Mod-y': redo }),
         keymap(baseKeymap),
-        collab.collab({ version: authority.steps.length })
+        collab.collab({ version: authority.steps.length }),
+        collabCursor.plugin(authority)
       ]
     }),
     dispatchTransaction (transaction) {
@@ -38,11 +40,21 @@ export function mountEditorView (mountElem, authority) {
       if (sendable) {
         authority.receiveSteps(sendable.version, sendable.steps, sendable.clientID)
       }
+
+      const cursorSendable = collabCursor.sendableData(newState)
+
+      if (cursorSendable) {
+        authority.receiveCursor(cursorSendable)
+      }
     }
   })
 
   authority.onNewSteps.push(() => {
     const newData = authority.stepsSince(collab.getVersion(view.state))
     view.dispatch(collab.receiveTransaction(view.state, newData.steps, newData.clientIDs))
+  })
+
+  authority.onCursorChange.push((cursorData) => {
+    view.dispatch(collabCursor.receiveTransaction(view.state, cursorData))
   })
 }
