@@ -17,9 +17,13 @@ export default function Editor ({ issueID }) {
       const authority = new ExtensionAuthority(editorDoc, editorSchema, issueID)
 
       authority.init()
-      mountEditorView(elemRef.current, authority)
+      const view = mountEditorView(elemRef.current, authority)
 
       renderRef.current = false
+
+      return () => {
+        view.destroy()
+      }
     }
   }, [elemRef.current])
 

@@ -26,6 +26,7 @@ export function mountEditorView (mountElem, authority) {
         history(),
         keymap({ 'Mod-z': undo, 'Mod-y': redo }),
         keymap(baseKeymap),
+        keymap({ 'Mod-Enter': () => window.history.back() }),
         collab.collab({ version: authority.steps.length }),
         collabCursor.plugin(authority)
       ]
@@ -57,4 +58,6 @@ export function mountEditorView (mountElem, authority) {
   authority.onCursorChange.push((cursorData) => {
     view.dispatch(collabCursor.receiveTransaction(view.state, cursorData))
   })
+
+  return view
 }

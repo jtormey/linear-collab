@@ -14,6 +14,10 @@ const randId = () => 'cursor-' + Math.random().toString(36).slice(2)
 const randColor = () => colors[Math.floor(Math.random() * colors.length)]
 
 function cursorDecorationsFromState (state) {
+  if (!state.collabCursor$) {
+    return []
+  }
+
   return Object.keys(state.collabCursor$.cursors)
     .filter((cursorID) => {
       return cursorID !== state.collabCursor$.id
@@ -54,6 +58,10 @@ export function plugin (authority) {
     appendTransaction (transactions, oldState, newState) {
       const transaction = newState.tr
 
+      if (!oldState.collabCursor$) {
+        return transaction
+      }
+
       transaction.setMeta('collabCursor', {
         cursors: {
           [oldState.collabCursor$.id]: {
@@ -75,6 +83,10 @@ export function plugin (authority) {
 }
 
 export function sendableData (state) {
+  if (!state.collabCursor$) {
+    return null
+  }
+
   const cursorID = state.collabCursor$.id
   const cursorData = state.collabCursor$.cursors[cursorID]
 
