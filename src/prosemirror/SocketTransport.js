@@ -23,4 +23,8 @@ export default class SocketTransport {
       this.socket.send(JSON.stringify(message))
     }
   }
+
+  close () {
+    this.socket.close()
+  }
 }

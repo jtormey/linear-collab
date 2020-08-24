@@ -18,7 +18,7 @@ export function createEditorDoc (targetElem) {
   return DOMParser.fromSchema(editorSchema).parse(targetElem)
 }
 
-export function mountEditorView (mountElem, authority) {
+export function mountEditorView (mountElem, authority, cursorID) {
   const view = new EditorView(mountElem, {
     state: EditorState.create({
       doc: authority.doc,
@@ -28,7 +28,7 @@ export function mountEditorView (mountElem, authority) {
         keymap(baseKeymap),
         keymap({ 'Mod-Enter': () => window.history.back() }),
         collab.collab({ version: authority.steps.length }),
-        collabCursor.plugin(authority)
+        collabCursor.plugin(authority, cursorID)
       ]
     }),
     dispatchTransaction (transaction) {

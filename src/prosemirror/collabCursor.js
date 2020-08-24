@@ -2,6 +2,8 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 import cursorWidgetDecoration from './cursorWidgetDecoration'
 
+const key = new PluginKey('collabCursor')
+
 const colors = [
   'orange',
   'palevioletred',
@@ -10,7 +12,7 @@ const colors = [
   'seashell'
 ]
 
-const randId = () => 'cursor-' + Math.random().toString(36).slice(2)
+export const randID = () => 'cursor-' + Math.random().toString(36).slice(2)
 const randColor = () => colors[Math.floor(Math.random() * colors.length)]
 
 function cursorDecorationsFromState (state) {
@@ -28,13 +30,13 @@ function cursorDecorationsFromState (state) {
     })
 }
 
-export function plugin (authority) {
+export function plugin (authority, cursorID) {
   return new Plugin({
-    key: new PluginKey('collabCursor'),
+    key,
     state: {
       init () {
         return {
-          id: randId(),
+          id: cursorID,
           color: randColor(),
           cursors: {}
         }

@@ -28,6 +28,14 @@ module.exports = class SocketRelay {
       this.emitter.on(action.issueID + '.cursor-receive', (action) => {
         this.send(conn, { type: 'cursor-reply', ...action.payload })
       })
+
+      this.emitter.on(action.issueID + '.disconnected', (payload) => {
+        this.send(conn, { type: 'cursor-disconnected', ...payload })
+      })
+
+      conn.on('close', () => {
+        this.emitter.emit(action.issueID + '.disconnected', { [action.cursorID]: {} })
+      })
     }
 
     if (action.type === 'steps-receive') {

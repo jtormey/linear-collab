@@ -4,12 +4,13 @@ import { Step } from 'prosemirror-transform'
  * A generic ProseMirror authority that enables collab-mode across a transport.
  */
 
-export default class ExtensionAuthority {
-  constructor (doc, schema, transport, issueID) {
+export default class Authority {
+  constructor (doc, schema, transport, issueID, cursorID) {
     this.doc = doc
     this.schema = schema
     this.transport = transport
     this.issueID = issueID
+    this.cursorID = cursorID
     this.steps = []
     this.stepClientIDs = []
     this.onNewSteps = []
@@ -19,7 +20,11 @@ export default class ExtensionAuthority {
 
   init () {
     return this.transport.init(this.handleUpdate.bind(this)).then(() => {
-      this.transport.send({ type: 'register', issueID: this.issueID })
+      this.transport.send({
+        type: 'register',
+        issueID: this.issueID,
+        cursorID: this.cursorID
+      })
     })
   }
 
@@ -66,6 +71,10 @@ export default class ExtensionAuthority {
     }
 
     if (action.type === 'cursor-reply') {
+      this.onCursorChange.forEach((f) => f(action))
+    }
+
+    if (action.type === 'cursor-disconnected') {
       this.onCursorChange.forEach((f) => f(action))
     }
   }

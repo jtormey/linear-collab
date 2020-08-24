@@ -11,4 +11,7 @@ export default class ExtensionTransport {
   send (message) {
     chrome.runtime.sendMessage(message)
   }
+
+  close () {
+  }
 }
