@@ -14,7 +14,8 @@ export default function Editor ({ issueID }) {
     if (elemRef.current) {
       const linearEditorElem = document.querySelector('form div[contenteditable="true"]')
       const editorDoc = createEditorDoc(linearEditorElem)
-      const transport = new SocketTransport('ws://localhost:8080/ws')
+      const transport = new SocketTransport('wss://collab.linear-sync.com/ws')
+      // const transport = new SocketTransport('ws://localhost:8080/ws')
       const authority = new Authority(editorDoc, editorSchema, transport)
 
       authority.init()
