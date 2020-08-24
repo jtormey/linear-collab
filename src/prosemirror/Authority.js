@@ -1,13 +1,14 @@
 import { Step } from 'prosemirror-transform'
 
 /**
- * A ProseMirror authority that enables collab-mode via websocket.
+ * A generic ProseMirror authority that enables collab-mode across a transport.
  */
 
-export default class SocketAuthority {
-  constructor (doc, schema, issueID) {
+export default class ExtensionAuthority {
+  constructor (doc, schema, transport, issueID) {
     this.doc = doc
     this.schema = schema
+    this.transport = transport
     this.issueID = issueID
     this.steps = []
     this.stepClientIDs = []
@@ -17,20 +18,15 @@ export default class SocketAuthority {
   }
 
   init () {
-    return new Promise((resolve) => {
-      this.socket = new window.WebSocket('ws://localhost:8080/ws')
-      this.socket.onopen = () => resolve()
-      this.socket.onclose = () => setTimeout(() => this.init(), 500)
-      this.socket.onmessage = (event) => this.handleUpdate(JSON.parse(event.data))
-    }).then(() => {
-      this.send({ type: 'register', issueID: this.issueID })
+    return this.transport.init(this.handleUpdate.bind(this)).then(() => {
+      this.transport.send({ type: 'register', issueID: this.issueID })
     })
   }
 
   receiveSteps (version, steps, clientID) {
     if (version !== this.steps.length) return
 
-    this.send({
+    this.transport.send({
       type: 'steps-receive',
       issueID: this.issueID,
       payload: {
@@ -46,19 +42,11 @@ export default class SocketAuthority {
 
     this.cursorPos = sendable.data.pos
 
-    this.send({
+    this.transport.send({
       type: 'cursor-receive',
       issueID: this.issueID,
       payload: { [sendable.id]: sendable.data }
     })
-  }
-
-  send (data) {
-    if (this.socket.readyState === window.WebSocket.OPENING) {
-      this.socket.onopen = () => this.send(data)
-    } else if (this.socket.readyState === window.WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(data))
-    }
   }
 
   handleUpdate (action) {

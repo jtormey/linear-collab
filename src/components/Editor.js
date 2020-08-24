@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { createEditorDoc, mountEditorView, editorSchema } from '../prosemirror/Editor'
-import SocketAuthority from '../prosemirror/SocketAuthority'
+import Authority from '../prosemirror/Authority'
+import SocketTransport from '../prosemirror/SocketTransport'
 
 function scrapeEditorClasses () {
   return document.querySelector('div[placeholder] > div').classList.value
@@ -13,7 +14,8 @@ export default function Editor ({ issueID }) {
     if (elemRef.current) {
       const linearEditorElem = document.querySelector('form div[contenteditable="true"]')
       const editorDoc = createEditorDoc(linearEditorElem)
-      const authority = new SocketAuthority(editorDoc, editorSchema, issueID)
+      const transport = new SocketTransport('ws://localhost:8080/ws')
+      const authority = new Authority(editorDoc, editorSchema, transport)
 
       authority.init()
       const view = mountEditorView(elemRef.current, authority)
